@@ -1,0 +1,19 @@
+Список команд программы:
+
+    create <name> - создает пустое множество с именем name.
+
+    add <name> <string> - добавляет элемент string во множество с именем name.
+
+    del <name> [element] - удаляет множество с именем name. 
+        В случае если указан параметр element, то удаляет его из множества с именеи name.
+
+    unite <leftSetName> <rightSetName> [resultSetName] - выводит на экран результат объединения множеств с именами leftSetName и rightSetName
+        или записывает результат во множество с именем resultSetName если оно указано.
+        В случае если множество с именем resultSetName не существует - создаст новое с таким именем.
+    
+    intersect <leftSetName> <rightSetName> [resultSetName] - выводит на экран результат пересечения множеств с именами leftSetName и rightSetName
+        или записывает результат во множество с именем resultSetName если оно указано.
+        В случае если множество с именем resultSetName не существует - создаст новое с таким именем.
+    
+    
+

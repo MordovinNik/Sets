@@ -37,10 +37,11 @@ public:
     int DeleteElement(const char *value);
     int Cardinality()const;
     bool IsSubset(const MySet& src)const;
+    bool CheckInclusion(const MySet& src)const;
 
     friend std::ostream &operator<<(std::ostream &out, const MySet &set);
     friend MySet& Unite (const MySet& Set1,const MySet& Set2);
     friend MySet& Intersection(const MySet& Set1,const MySet& Set2);
     friend MySet& Difference(const MySet &Set1, const MySet &Set2);
-    friend MySet &SymDiff(const MySet &Set1, const MySet &Set2);
+    friend MySet& SymDiff(const MySet &Set1, const MySet &Set2);
 };

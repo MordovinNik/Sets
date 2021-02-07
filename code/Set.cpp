@@ -376,39 +376,25 @@ MySet &SymDiff(const MySet &Set1, const MySet &Set2)
     return *newSet;
 }
 
-
-int main()
+bool MySet::CheckInclusion(const MySet &src) const
 {
-    MySet a, b;
+    SetElement *element1 = src.list, *element2 = this->list;
+    while (true)
+    {
+        if (*element1 == *element2)
+        {
+            element1 = element1->Next();
+            element2 = element2->Next();
 
-    a.AddElement("aa");
-    a.AddElement("bb");
-    a.AddElement("zz");
-    a.AddElement("dd");
-    a.AddElement("ee");
+            if (element1 == src.list)
+                return true;
+        }
+        else
+        {
+            element2 = element2->Next();
+        }
 
-    cout << a.Cardinality();
-
-    b.AddElement("aa");
-    b.AddElement("cc");
-    b.AddElement("gg");
-    b.AddElement("ff");
-    b.AddElement("uu");
-    cout << b.Cardinality();
-
-    cout << Difference(b, a);
-
-    //cout << a;
-    // a.DeleteElement("aa");
-    // a.DeleteElement("b");
-    // a.DeleteElement("e3");
-    // a.DeleteElement("asdfas");
-    // a.DeleteElement("fddgfsh");
-    // cout << a.AddElement("e3");
-    // cout << a.AddElement("b");
-    // cout << a.AddElement("aa");
-    // cout << a.AddElement("asdfas");
-    // cout << a.AddElement("fddgfsh");
-
-    //cout << a;
+        if (element2 == this->list)
+            return false;
+    }
 }
