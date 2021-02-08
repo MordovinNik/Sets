@@ -14,10 +14,9 @@ public:
     int SetData(const char *dat);
     const char *Data() const;
     SetElement *Next();
-    SetElement* Prev();
-    void SetNext(SetElement*);
-    void SetPrev(SetElement*);
-    
+    SetElement *Prev();
+    void SetNext(SetElement *);
+    void SetPrev(SetElement *);
 
     friend bool operator<(const SetElement &left, const SetElement &right);
     friend bool operator<=(const SetElement &left, const SetElement &right);
@@ -36,7 +35,7 @@ private:
     MySet *next, *prev;
 
 public:
-    MySet(const std::string& setName);
+    MySet(const std::string &setName);
     MySet(const MySet &);
     ~MySet();
     int AddElement(const char *value);
@@ -46,36 +45,35 @@ public:
     int Cardinality() const;
     bool IsSubset(const MySet &src) const;
     bool CheckInclusion(const MySet &src) const;
-    void SetName(const std::string& SetName);
-    bool operator<(const MySet& src);
-    bool operator>(const MySet& src);
+    void SetName(const std::string &SetName);
+    bool operator<(const MySet &src);
+    bool operator>(const MySet &src);
     bool operator==(const MySet &src);
-    MySet* Next();
-    MySet* Prev();
-    void SetNext(MySet*);
-    void SetPrev(MySet*);
+    MySet *Next();
+    MySet *Prev();
+    void SetNext(MySet *);
+    void SetPrev(MySet *);
     std::string Name();
 
     friend std::ostream &operator<<(std::ostream &out, const MySet &set);
-    friend MySet &Unite(const MySet &Set1, const MySet &Set2,const std::string& setName);
-    friend MySet &Intersection(const MySet &Set1, const MySet &Set2,const std::string& setName);
-    friend MySet &Difference(const MySet &Set1, const MySet &Set2,const std::string& setName);
-    friend MySet &SymDiff(const MySet &Set1, const MySet &Set2,const std::string& setName);
+    friend MySet &Unite(const MySet &Set1, const MySet &Set2, const std::string &setName);
+    friend MySet &Intersection(const MySet &Set1, const MySet &Set2, const std::string &setName);
+    friend MySet &Difference(const MySet &Set1, const MySet &Set2, const std::string &setName);
+    friend MySet &SymDiff(const MySet &Set1, const MySet &Set2, const std::string &setName);
 };
 
-class SetsList 
+class SetsList
 {
 private:
-MySet * list;
-int counter;
+    MySet *list;
+    int counter;
 
 public:
-SetsList();
-~SetsList();
-int AddSet(const MySet& set);
-void DeleteSet(std::string);
-MySet* FindSet(std::string);
+    SetsList();
+    ~SetsList();
+    int AddSet(const MySet &set);
+    void DeleteSet(std::string);
+    MySet *FindSet(std::string);
 
-friend std::ofstream& operator<<(std::ofstream& out,const SetsList& lst);
-
+    friend std::ostream &operator<<(std::ostream &out, const SetsList &lst);
 };

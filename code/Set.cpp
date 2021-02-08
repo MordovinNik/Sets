@@ -133,12 +133,15 @@ MySet::MySet(const MySet &src)
     name = src.name;
     next = prev = this;
 
-    while (tmp->next != src.list)
+    if (src.list != nullptr)
     {
+        while (tmp->next != src.list)
+        {
+            AddElement(*tmp);
+            tmp = tmp->next;
+        }
         AddElement(*tmp);
-        tmp = tmp->next;
     }
-    AddElement(*tmp);
 }
 
 MySet::~MySet()
@@ -230,7 +233,7 @@ std::ostream &operator<<(std::ostream &out, const MySet &set)
     SetElement *tmp = set.list;
     while (tmp->Next() != set.list)
     {
-        out << *tmp << ' ';
+        out << *tmp << '\n';
         tmp = tmp->Next();
     }
 
@@ -356,28 +359,30 @@ MySet &Difference(const MySet &Set1, const MySet &Set2, const std::string &setNa
             newSet->AddElement(*element1);
             element1 = element1->Next();
         }
-        else if (*element1 == *element2)
-        {
-            element1 = element1->Next();
-            element2 = element2->Next();
-        }
         else
         {
-            element2 = element2->Next();
-        }
+            if (*element1 == *element2)
+            {
+                element1 = element1->Next();
+                element2 = element2->Next();
+            }
+            else
+            {
+                element2 = element2->Next();
+            }
 
+            if (element2 == Set2.list)
+            {
+                while (element1 != Set1.list)
+                {
+                    newSet->AddElement(*element1);
+                    element1 = element1->Next();
+                }
+                break;
+            }
+        }
         if (element1 == Set1.list)
             break;
-
-        if (element2 == Set2.list)
-        {
-            while (element1 != Set1.list)
-            {
-                newSet->AddElement(*element1);
-                element1 = element1->Next();
-            }
-            break;
-        }
     }
     return *newSet;
 }
@@ -394,15 +399,28 @@ MySet &SymDiff(const MySet &Set1, const MySet &Set2, const std::string &setName)
             newSet->AddElement(*element1);
             element1 = element1->Next();
         }
-        else if (*element1 == *element2)
-        {
-            element1 = element1->Next();
-            element2 = element2->Next();
-        }
         else
         {
-            newSet->AddElement(*element2);
-            element2 = element2->Next();
+            if (*element1 == *element2)
+            {
+                element1 = element1->Next();
+                element2 = element2->Next();
+            }
+            else
+            {
+                newSet->AddElement(*element2);
+                element2 = element2->Next();
+            }
+            
+            if (element2 == Set2.list)
+            {
+                while (element1 != Set1.list)
+                {
+                    newSet->AddElement(*element1);
+                    element1 = element1->Next();
+                }
+                break;
+            }
         }
 
         if (element1 == Set1.list)
@@ -411,16 +429,6 @@ MySet &SymDiff(const MySet &Set1, const MySet &Set2, const std::string &setName)
             {
                 newSet->AddElement(*element2);
                 element2 = element2->Next();
-            }
-            break;
-        }
-
-        if (element2 == Set2.list)
-        {
-            while (element1 != Set1.list)
-            {
-                newSet->AddElement(*element1);
-                element1 = element1->Next();
             }
             break;
         }
@@ -478,7 +486,7 @@ std::string MySet::Name()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-SetsList::SetsList() : list(nullptr),counter(0) {}
+SetsList::SetsList() : list(nullptr), counter(0) {}
 
 SetsList::~SetsList()
 {
@@ -539,6 +547,8 @@ int SetsList::AddSet(const MySet &set)
 MySet *SetsList::FindSet(std::string name)
 {
     MySet *tmp = list;
+    if (list == nullptr)
+        return nullptr;
 
     do
     {
@@ -546,17 +556,17 @@ MySet *SetsList::FindSet(std::string name)
             return tmp;
         tmp = tmp->Next();
     } while (tmp != list);
-    
+
     return nullptr;
 }
 
 void SetsList::DeleteSet(std::string name)
 {
     MySet *tmp = FindSet(name);
-    
+
     if (tmp == nullptr)
         return;
-    
+
     tmp->Next()->SetPrev(tmp->Prev());
     tmp->Prev()->SetNext(tmp->Next());
 
@@ -573,4 +583,24 @@ void SetsList::DeleteSet(std::string name)
 
     counter--;
     delete tmp;
+}
+
+std::ostream &operator<<(std::ostream &out, const SetsList &lst)
+{
+    if (lst.list == nullptr)
+    {
+        out << "empty!\n";
+        return out;
+    }
+
+    MySet *tmp = lst.list;
+    while (tmp->Next() != lst.list)
+    {
+        out << tmp->Name() << std::endl;
+        tmp = tmp->Next();
+    }
+
+    out << tmp->Name() << '\n';
+
+    return out;
 }
