@@ -28,7 +28,7 @@ SetElement::~SetElement()
 
 std::ostream &operator<<(std::ostream &out, const SetElement &element)
 {
-    out << element.data;
+    out << '\"' << element.data << '\"';
     return out;
 }
 
@@ -302,29 +302,59 @@ void MySet::SetName(const std::string &SetName)
     name = SetName;
 }
 
-MySet &Unite(const MySet &Set1, const MySet &Set2, const std::string &setName)
+MySet Unite(const MySet &Set1, const MySet &Set2, const std::string &setName)
 {
-    MySet *newSet = new MySet(Set1);
-    newSet->SetName(setName);
+    if (!Set2.cardinality)
+    {
+        MySet newSet(Set1);
+        newSet.SetName(setName);
+        return newSet;
+    }
+
+    if (!Set1.cardinality)
+    {
+        MySet newSet(Set2);
+        newSet.SetName(setName);
+        return newSet;
+    }
+
+    MySet newSet(Set1);
+    newSet.SetName(setName);
 
     SetElement *tmp = Set2.list;
 
     while (tmp->Next() != Set2.list)
     {
-        newSet->AddElement(*tmp);
+        newSet.pushBack(*tmp);
         tmp = tmp->Next();
     }
 
-    newSet->AddElement(*tmp);
+    newSet.pushBack(*tmp);
 
-    return *newSet;
+    return newSet;
 }
 
-MySet &Intersection(const MySet &Set1, const MySet &Set2, const std::string &setName)
+MySet Intersection(const MySet &Set1, const MySet &Set2, const std::string &setName)
 {
-    MySet *newSet = new MySet(setName);
+    if (!Set2.cardinality)
+    {
+        MySet newSet(Set2);
+        newSet.SetName(setName);
+        return newSet;
+    }
+
+    if (!Set1.cardinality)
+    {
+        MySet newSet(Set1);
+        newSet.SetName(setName);
+        return newSet;
+    }
+
+    MySet newSet(setName);
     SetElement *element1 = Set1.list, *element2 = Set2.list;
 
+    if (element1 == nullptr || element2 == nullptr)
+        return newSet;
     while (true)
     {
         if (*element1 < *element2)
@@ -333,7 +363,7 @@ MySet &Intersection(const MySet &Set1, const MySet &Set2, const std::string &set
         }
         else if (*element1 == *element2)
         {
-            newSet->AddElement(*element2);
+            newSet.pushBack(*element2);
             element1 = element1->Next();
             element2 = element2->Next();
         }
@@ -344,19 +374,25 @@ MySet &Intersection(const MySet &Set1, const MySet &Set2, const std::string &set
         if (element1 == Set1.list || element2 == Set2.list)
             break;
     }
-    return *newSet;
+    return newSet;
 }
 
-MySet &Difference(const MySet &Set1, const MySet &Set2, const std::string &setName)
+MySet Difference(const MySet &Set1, const MySet &Set2, const std::string &setName)
 {
-    MySet *newSet = new MySet(setName);
+    if (!Set1.cardinality || !Set2.cardinality)
+    {
+        MySet newSet(Set1);
+        newSet.SetName(setName);
+        return newSet;
+    }
+    MySet newSet(setName);
     SetElement *element1 = Set1.list, *element2 = Set2.list;
 
     while (true)
     {
         if (*element1 < *element2)
         {
-            newSet->AddElement(*element1);
+            newSet.pushBack(*element1);
             element1 = element1->Next();
         }
         else
@@ -375,7 +411,7 @@ MySet &Difference(const MySet &Set1, const MySet &Set2, const std::string &setNa
             {
                 while (element1 != Set1.list)
                 {
-                    newSet->AddElement(*element1);
+                    newSet.pushBack(*element1);
                     element1 = element1->Next();
                 }
                 break;
@@ -384,19 +420,33 @@ MySet &Difference(const MySet &Set1, const MySet &Set2, const std::string &setNa
         if (element1 == Set1.list)
             break;
     }
-    return *newSet;
+    return newSet;
 }
 
-MySet &SymDiff(const MySet &Set1, const MySet &Set2, const std::string &setName)
+MySet SymDiff(const MySet &Set1, const MySet &Set2, const std::string &setName)
 {
-    MySet *newSet = new MySet(setName);
+    if (!Set1.cardinality)
+    {
+        MySet newSet(Set2);
+        newSet.SetName(setName);
+        return newSet;
+    }
+
+    if (!Set2.cardinality)
+    {
+        MySet newSet(Set1);
+        newSet.SetName(setName);
+        return newSet;
+    }
+
+    MySet newSet(setName);
     SetElement *element1 = Set1.list, *element2 = Set2.list;
 
     while (true)
     {
         if (*element1 < *element2)
         {
-            newSet->AddElement(*element1);
+            newSet.pushBack(*element1);
             element1 = element1->Next();
         }
         else
@@ -408,15 +458,15 @@ MySet &SymDiff(const MySet &Set1, const MySet &Set2, const std::string &setName)
             }
             else
             {
-                newSet->AddElement(*element2);
+                newSet.pushBack(*element2);
                 element2 = element2->Next();
             }
-            
+
             if (element2 == Set2.list)
             {
                 while (element1 != Set1.list)
                 {
-                    newSet->AddElement(*element1);
+                    newSet.pushBack(*element1);
                     element1 = element1->Next();
                 }
                 break;
@@ -427,17 +477,23 @@ MySet &SymDiff(const MySet &Set1, const MySet &Set2, const std::string &setName)
         {
             while (element2 != Set2.list)
             {
-                newSet->AddElement(*element2);
+                newSet.pushBack(*element2);
                 element2 = element2->Next();
             }
             break;
         }
     }
-    return *newSet;
+    return newSet;
 }
 
 bool MySet::CheckInclusion(const MySet &src) const
 {
+    if (!src.cardinality)
+        return true;
+        
+    if (!this->cardinality)
+        return false;
+
     SetElement *element1 = src.list, *element2 = this->list;
     while (true)
     {
@@ -482,6 +538,32 @@ void MySet::SetPrev(MySet *ptr)
 std::string MySet::Name()
 {
     return name;
+}
+
+int MySet::pushBack(const SetElement &element)
+{
+    SetElement *newElement = new SetElement(element);
+
+    if (list == nullptr)
+    {
+        cardinality = 1;
+        list = newElement;
+        newElement->next = newElement->prev = newElement;
+        return 0;
+    }
+
+    newElement->next = list;
+    newElement->prev = list->prev;
+    list->prev->next = newElement;
+    list->prev = newElement;
+    return 0;
+}
+
+int MySet::pushFront(const SetElement &element)
+{
+    pushBack(element);
+    list = list->prev;
+    return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

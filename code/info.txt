@@ -6,9 +6,9 @@
 
     create <name> - создает пустое множество с именем name.
 
-    add <name> <string> - добавляет элемент string во множество с именем name.
+    add <name> <"element"> - добавляет элемент string во множество с именем name.
 
-    del <name> [element] - удаляет множество с именем name. 
+    del <name> ["element"] - удаляет множество с именем name. 
         В случае если указан параметр element, то удаляет его из множества с именеи name.
 
     unite <leftSetName> <rightSetName> [resultSetName] - выводит на экран результат объединения множеств с именами leftSetName и rightSetName
@@ -19,16 +19,16 @@
         или записывает результат во множество с именем resultSetName если оно указано.
         В случае если множество с именем resultSetName не существует - создаст новое с таким именем.
     
-    diff <leftSetName> <rightSetName> [resultSetName] - выводит на экран результат вычитания множества с именем rightSetName из множества с именем leftSetName
-        или записывает результат во множество с именем resultSetName если оно указано.
+    diff <leftSetName> <rightSetName> [resultSetName] - выводит на экран результат вычитания множества с именем rightSetName
+         из множества с именем leftSetName или записывает результат во множество с именем resultSetName если оно указано.
         В случае если множество с именем resultSetName не существует - создаст новое с таким именем. 
 
     symDiff <leftSetName> <rightSetName> [resultSetName] - выводит на экран результат симметрической разности множеств с именами leftSetName и rightSetName
         или записывает результат во множество с именем resultSetName если оно указано.
         В случае если множество с именем resultSetName не существует - создаст новое с таким именем. 
 
-    checkInclusion <leftSetName> <rightSetName | "element"> - выводит на экран результат проверки на вхождение множества с именем rightSetName или элемента element во множество
-        с именем leftSetName.
+    checkInclusion <leftSetName> <rightSetName | "element"> - выводит на экран результат проверки на вхождение множества с именем rightSetName
+         или элемента element во множество с именем leftSetName.
         возвращаемые значения:
             1 - множество с именем rightSetName или элемент element входит во множество с именем leftSetName
             0 - множество с именем rightSetName или элемент element не входит во множество с именем leftSetName

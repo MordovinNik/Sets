@@ -54,12 +54,14 @@ public:
     void SetNext(MySet *);
     void SetPrev(MySet *);
     std::string Name();
+    int pushBack(const SetElement& element);
+    int pushFront(const SetElement& element);
 
     friend std::ostream &operator<<(std::ostream &out, const MySet &set);
-    friend MySet &Unite(const MySet &Set1, const MySet &Set2, const std::string &setName);
-    friend MySet &Intersection(const MySet &Set1, const MySet &Set2, const std::string &setName);
-    friend MySet &Difference(const MySet &Set1, const MySet &Set2, const std::string &setName);
-    friend MySet &SymDiff(const MySet &Set1, const MySet &Set2, const std::string &setName);
+    friend MySet Unite(const MySet &Set1, const MySet &Set2, const std::string &setName);
+    friend MySet Intersection(const MySet &Set1, const MySet &Set2, const std::string &setName);
+    friend MySet Difference(const MySet &Set1, const MySet &Set2, const std::string &setName);
+    friend MySet SymDiff(const MySet &Set1, const MySet &Set2, const std::string &setName);
 };
 
 class SetsList
