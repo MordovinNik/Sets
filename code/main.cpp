@@ -7,17 +7,81 @@
 
 using namespace std;
 
-list<string> split(const string &str)
+void DeleteLeftRightSpaces(string &str)
 {
-    list<string> elems;
-    stringstream ss;
-    ss.str(str);
-    string item;
+    int i = 0, j = str.size() - 1;
+    while (isspace(str[i]) && i < str.length())
+        i++;
 
-    while (getline(ss, item, ' '))
-        elems.push_back(item);
+    while (isspace(str[j]) && j > 0)
+        j--;
 
-    return elems;
+    if (i <= j)
+        str = str.substr(i, j - i + 1);
+    else
+        str.clear();
+}
+
+void DeleteDoubleSpaces(string &str)
+{
+    int size = str.size();
+    bool del = true, wasSpace = false;
+    string newstr;
+    for (int i = 0; i < size; i++)
+    {
+        if (str[i] == '\"')
+            del = false;
+
+        if (isspace(str[i]) && str[i] != '\n' && del)
+        {
+            if (wasSpace)
+                continue;
+            else
+                wasSpace = true;
+        }
+        else if (wasSpace)
+            wasSpace = false;
+        newstr.push_back(str[i]);
+    }
+    str = newstr;
+}
+
+int checkLocale(string &str)
+{
+    for (auto i : str)
+    {
+        if (i < 0 || i > 127)
+            return false;
+    }
+}
+
+void SetOperation(MySet (*func)(const MySet &, const MySet &, const std::string &), stringstream &ss, SetsList &lst)
+{
+    string leftSetName, rightSetName, resultSetName;
+    if (!getline(ss, leftSetName, ' ') || !getline(ss, rightSetName, ' '))
+    {
+        cout << "too few arguments" << endl;
+        return;
+    }
+    DeleteLeftRightSpaces(rightSetName);
+    MySet *leftSet = lst.FindSet(leftSetName), *rightSet = lst.FindSet(rightSetName);
+
+    if (leftSet == nullptr || rightSet == nullptr)
+    {
+        cout << "no such set in list" << endl;
+        return;
+    }
+
+    if (getline(ss, resultSetName, ' '))
+    {
+        lst.DeleteSet(resultSetName);
+        MySet newSet = func(*leftSet, *rightSet, resultSetName);
+        lst.AddSet(newSet);
+        return;
+    }
+    MySet newSet = func(*leftSet, *rightSet, "noname(");
+    cout << newSet;
+    return;
 }
 
 int SetsInterface()
@@ -35,6 +99,7 @@ int SetsInterface()
         CM_PRINT,
         CM_EXIT
     };
+
     map<string, int> mapping = {{"create", CM_CREATE}, {"add", CM_ADD}, {"del", CM_DEL}, {"unite", CM_UNITE}, {"intersect", CM_INTERSECT}, {"diff", CM_DIFF}, {"symDiff", CM_SYMDIFF}, {"checkInclusion", CM_CHECK_INCLUSION}, {"print", CM_PRINT}, {"exit", CM_EXIT}};
     cout << "start:" << endl;
     string input, tmp;
@@ -42,7 +107,14 @@ int SetsInterface()
 
     while (true)
     {
+        cout << ">>";
         getline(cin, input);
+        if(!checkLocale(input))
+        {
+            cout<<"incorrect symbols\n";
+            continue;
+        }
+        DeleteDoubleSpaces(input);
         stringstream ss;
         ss.str(input);
         getline(ss, tmp, ' ');
@@ -62,6 +134,12 @@ int SetsInterface()
                 cout << "too few arguments" << endl;
                 break;
             }
+
+            if(tmp[0] == '\"')
+            {
+                cout<<"set name cannot start with \"\n";
+                break;
+            }
             MySet set(tmp);
 
             if (getline(ss, tmp, ' '))
@@ -75,7 +153,6 @@ int SetsInterface()
                 cout << "such set already exists" << endl;
                 break;
             }
-            cout<<endl;
             break;
         }
 
@@ -96,6 +173,19 @@ int SetsInterface()
             }
 
             SetElement elem;
+
+            DeleteLeftRightSpaces(element);
+
+            if (element[0] == '\"' && element[element.length() - 1] == '\"')
+            {
+                element = element.substr(1, element.length() - 2);
+            }
+            else
+            {
+                cout << "incorrect element input format" << endl;
+                break;
+            }
+
             if (elem.SetData(element.data()))
             {
                 cout << "incorrect element data" << endl;
@@ -107,7 +197,6 @@ int SetsInterface()
                 cout << "such element already exists in this set" << endl;
                 break;
             }
-            cout<< endl;
             break;
         }
 
@@ -129,6 +218,19 @@ int SetsInterface()
 
             if (getline(ss, element, ' '))
             {
+
+                DeleteLeftRightSpaces(element);
+
+                if (element[0] == '\"' && element[element.length() - 1] == '\"')
+                {
+                    element = element.substr(1, element.length() - 2);
+                }
+                else
+                {
+                    cout << "incorrect element input format" << endl;
+                    break;
+                }
+
                 if (!set->FindElement(element.data()))
                 {
                     cout << "no such element in set" << endl;
@@ -138,7 +240,6 @@ int SetsInterface()
                 break;
             }
             lst.DeleteSet(setName);
-            cout<< endl;
             break;
         }
 
@@ -154,126 +255,33 @@ int SetsInterface()
                     cout << "no such set in list" << endl;
                     break;
                 }
-                cout << (*set) << endl;
+                cout << (*set);
                 break;
             }
-            cout << lst << endl;
+            cout << lst;
             break;
         }
-
         case CM_UNITE:
         {
-            string leftSetName, rightSetName, resultSetName;
-            if (!getline(ss, leftSetName, ' ') || !getline(ss, rightSetName, ' '))
-            {
-                cout << "too few arguments" << endl;
-                break;
-            }
-
-            MySet *leftSet = lst.FindSet(leftSetName), *rightSet = lst.FindSet(rightSetName);
-
-            if (leftSet == nullptr || rightSet == nullptr)
-            {
-                cout << "no such set in list" << endl;
-                break;
-            }
-
-            if (getline(ss, resultSetName, ' '))
-            {
-                lst.DeleteSet(resultSetName);
-                MySet newSet = Unite(*leftSet, *rightSet, resultSetName);
-                lst.AddSet(newSet);
-                break;
-            }
-            MySet newSet = Unite(*leftSet, *rightSet, "noname(");
-            cout << newSet << endl;
+            SetOperation(Unite, ss, lst);
             break;
         }
 
         case CM_INTERSECT:
         {
-            string leftSetName, rightSetName, resultSetName;
-            if (!getline(ss, leftSetName, ' ') || !getline(ss, rightSetName, ' '))
-            {
-                cout << "too few arguments" << endl;
-                break;
-            }
-
-            MySet *leftSet = lst.FindSet(leftSetName), *rightSet = lst.FindSet(rightSetName);
-
-            if (leftSet == nullptr || rightSet == nullptr)
-            {
-                cout << "no such set in list" << endl;
-                break;
-            }
-
-            if (getline(ss, resultSetName, ' '))
-            {
-                lst.DeleteSet(resultSetName);
-                MySet newSet = Intersection(*leftSet, *rightSet, resultSetName);
-                lst.AddSet(newSet);
-                break;
-            }
-            MySet newSet = Intersection(*leftSet, *rightSet, "noname(");
-            cout << newSet << endl;
+            SetOperation(Intersection, ss, lst);
             break;
         }
 
         case CM_DIFF:
         {
-            string leftSetName, rightSetName, resultSetName;
-            if (!getline(ss, leftSetName, ' ') || !getline(ss, rightSetName, ' '))
-            {
-                cout << "too few arguments" << endl;
-                break;
-            }
-
-            MySet *leftSet = lst.FindSet(leftSetName), *rightSet = lst.FindSet(rightSetName);
-
-            if (leftSet == nullptr || rightSet == nullptr)
-            {
-                cout << "no such set in list" << endl;
-                break;
-            }
-
-            if (getline(ss, resultSetName, ' '))
-            {
-                lst.DeleteSet(resultSetName);
-                MySet newSet = Difference(*leftSet, *rightSet, resultSetName);
-                lst.AddSet(newSet);
-                break;
-            }
-            MySet newSet = Difference(*leftSet, *rightSet, "noname(");
-            cout << newSet << endl;
+            SetOperation(Difference, ss, lst);
             break;
         }
 
         case CM_SYMDIFF:
         {
-            string leftSetName, rightSetName, resultSetName;
-            if (!getline(ss, leftSetName, ' ') || !getline(ss, rightSetName, ' '))
-            {
-                cout << "too few arguments" << endl;
-                break;
-            }
-
-            MySet *leftSet = lst.FindSet(leftSetName), *rightSet = lst.FindSet(rightSetName);
-
-            if (leftSet == nullptr || rightSet == nullptr)
-            {
-                cout << "no such set in list" << endl;
-                break;
-            }
-
-            if (getline(ss, resultSetName, ' '))
-            {
-                lst.DeleteSet(resultSetName);
-                MySet newSet = SymDiff(*leftSet, *rightSet, resultSetName);
-                lst.AddSet(newSet);
-                break;
-            }
-            MySet newSet = SymDiff(*leftSet, *rightSet, "noname(");
-            cout << newSet << endl;
+            SetOperation(SymDiff, ss, lst);
             break;
         }
 
@@ -281,7 +289,7 @@ int SetsInterface()
         {
             string leftSetName, rightName;
 
-            if (!getline(ss, leftSetName, ' ') || !getline(ss, rightName, ' '))
+            if (!getline(ss, leftSetName, ' ') || !getline(ss, rightName, '\n'))
             {
                 cout << "too few arguments" << endl;
                 break;
@@ -294,7 +302,7 @@ int SetsInterface()
                 cout << "no such set in list" << endl;
                 break;
             }
-
+            DeleteLeftRightSpaces(rightName);
             if (rightName[0] == '\"' && rightName[rightName.length() - 1] == '\"')
             {
                 cout << !!leftSet->FindElement((rightName.substr(1, rightName.length() - 2)).data()) << endl;
@@ -312,10 +320,10 @@ int SetsInterface()
             cout << leftSet->CheckInclusion(*rightSet) << endl;
             break;
         }
-        
+
         case CM_EXIT:
         {
-            cout<<"turning off...";
+            cout << "turning off...\n";
             return 0;
         }
         }
