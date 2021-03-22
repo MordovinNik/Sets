@@ -108,7 +108,7 @@ int SetsInterface()
         CM_CARDINALITY
     };
 
-    map<string, int> mapping = {{"create", CM_CREATE}, {"add", CM_ADD}, {"del", CM_DEL}, {"unite", CM_UNITE}, {"intersect", CM_INTERSECT}, {"diff", CM_DIFF}, {"symDiff", CM_SYMDIFF}, {"checkInclusion", CM_CHECK_INCLUSION}, {"print", CM_PRINT}, {"exit", CM_EXIT}, {"help", CM_HELP},{"cardinality",CM_CARDINALITY}};
+    map<string, int> mapping = {{"create", CM_CREATE}, {"add", CM_ADD}, {"del", CM_DEL}, {"unite", CM_UNITE}, {"intersect", CM_INTERSECT}, {"diff", CM_DIFF}, {"symDiff", CM_SYMDIFF}, {"checkInclusion", CM_CHECK_INCLUSION}, {"print", CM_PRINT}, {"exit", CM_EXIT}, {"help", CM_HELP},{"card",CM_CARDINALITY}};
     cout << "start:" << endl;
     string input, tmp;
     SetsList lst;
@@ -173,6 +173,8 @@ int SetsInterface()
             "      0 - множество с именем rightSetName или элемент element не входит во множество с именем leftSetName\n\n"
 
             "  print[name] - выводит на экран список имен всех множеств или список всех элементов множества с именем name\n\n"
+
+            "  card <setName> - выводит мощность множества с именем setName\n\n"
 
             "  exit - выход из программы.\n";
             break;
