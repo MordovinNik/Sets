@@ -385,6 +385,7 @@ MySet Difference(const MySet &Set1, const MySet &Set2, const std::string &setNam
         newSet.SetName(setName);
         return newSet;
     }
+    bool flag = true;
     MySet newSet(setName);
     SetElement *element1 = Set1.list, *element2 = Set2.list;
 
@@ -394,6 +395,7 @@ MySet Difference(const MySet &Set1, const MySet &Set2, const std::string &setNam
         {
             newSet.pushBack(*element1);
             element1 = element1->Next();
+            flag = false;
         }
         else
         {
@@ -401,6 +403,7 @@ MySet Difference(const MySet &Set1, const MySet &Set2, const std::string &setNam
             {
                 element1 = element1->Next();
                 element2 = element2->Next();
+                flag = false;
             }
             else
             {
@@ -409,8 +412,9 @@ MySet Difference(const MySet &Set1, const MySet &Set2, const std::string &setNam
 
             if (element2 == Set2.list)
             {
-                while (element1 != Set1.list)
+                while (element1 != Set1.list || flag)
                 {
+                    flag = false;
                     newSet.pushBack(*element1);
                     element1 = element1->Next();
                 }
@@ -552,6 +556,7 @@ int MySet::pushBack(const SetElement &element)
         return 0;
     }
 
+    cardinality++;
     newElement->next = list;
     newElement->prev = list->prev;
     list->prev->next = newElement;
