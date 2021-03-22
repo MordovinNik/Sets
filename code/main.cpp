@@ -1,4 +1,4 @@
-#include "Set.cpp"
+#include "Set.h"
 #include <vector>
 #include <list>
 #include <algorithm>
@@ -6,6 +6,11 @@
 #include <map>
 
 using namespace std;
+
+MySet Unite(const MySet& Set1, const MySet& Set2, const std::string& setName);
+MySet Intersection(const MySet& Set1, const MySet& Set2, const std::string& setName);
+MySet Difference(const MySet& Set1, const MySet& Set2, const std::string& setName);
+MySet SymDiff(const MySet& Set1, const MySet& Set2, const std::string& setName);
 
 void DeleteLeftRightSpaces(string &str)
 {
